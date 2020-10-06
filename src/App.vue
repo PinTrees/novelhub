@@ -2,11 +2,8 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <v-app-bar-nav-icon @click="drawer = !drawer" />
-      <site-title :title="title"></site-title>
+      <site-title :title="site.title"></site-title>
       <v-spacer />
-      <v-btn icon @click="save">
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer">
@@ -17,90 +14,105 @@
         </v-list-item-content>
       </v-list-item>
       <v-divider></v-divider>
-      <v-list>
-        <v-list-group
-          v-for="(item, i) in items"
-          :key="i"
-          v-model="item.active"
-          :prepend-icon="item.icon"
-          no-action
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
-            </v-list-item-content>
-          </template>
-
-          <v-list-item
-            v-for="subItem in item.subItems"
-            :key="subItem.title"
-            :to="subItem.to"
-          >
-            <v-list-item-content>
-              <v-list-item-title v-text="subItem.title"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
-      </v-list>
+      <site-menu :items="site.menu"></site-menu>
     </v-navigation-drawer>
 
     <v-content>
       <router-view />
     </v-content>
 
-    <t-footer :footer="footer"></t-footer>
+    <t-footer :footer="site.footer"></t-footer>
   </v-app>
 </template>
 
 <script>
-import SiteTitle from '@/views/site/title.vue';
-import TFooter from '@/components/footer.vue';
-//import SiteMenu from '@/components/menu.vue'
+import SiteTitle from "@/components/title.vue";
+import TFooter from "@/components/footer.vue";
+import SiteMenu from "@/components/menu.vue";
 
 export default {
-  components: { SiteTitle, TFooter /*SiteMenu*/ },
-  name: 'App',
+  components: { SiteTitle, TFooter, SiteMenu },
+  name: "App",
   data() {
     return {
       drawer: false,
-      item: [],
-      title: 'ssssss',
-      footer: 'footer',
-      items: [
-        {
-          title: 'home',
-          icon: 'mdi-home',
-          active: true,
-          subItems: [
-            {
-              title: 'Dashboard',
-              to: '/',
-            },
-            {
-              title: 'About',
-              to: '/about',
-            },
-          ],
-        },
-        {
-          title: 'about',
-          icon: 'mdi-account',
-          subItems: [
-            {
-              title: 'xxx',
-              to: '/xxx',
-            },
-          ],
-        },
-      ],
+      site: {
+        menu: [
+          {
+            title: "home",
+            icon: "mdi-home",
+            active: true,
+            subItems: [
+              {
+                title: "Dashboard",
+                to: "/",
+              },
+              {
+                title: "About",
+                to: "/about",
+              },
+            ],
+          },
+          {
+            title: "about",
+            icon: "mdi-account",
+            subItems: [
+              {
+                title: "xxx",
+                to: "/xxx",
+              },
+            ],
+          },
+        ],
+        title: "Novel Hub",
+        footer: "footer",
+      },
     };
+  },
+  created() {
+    this.subscribe();
   },
   mounted() {
     console.log(this.$firebase);
   },
   methods: {
-    save() {
-      console.log('save sss');
+    subscribe() {
+      this.$firebase
+        .database()
+        .ref()
+        .child("site")
+        .on(
+          "value",
+          (sn) => {
+            const v = sn.val();
+            if (!v) {
+              this.$firebase.database().ref().child("site").set(this.site);
+              return;
+            }
+            this.site = v;
+          },
+          (e) => {
+            console.log(e.message);
+          }
+        );
+    },
+    read() {
+      this.$firebase
+        .database()
+        .ref()
+        .child("abcd")
+        .on("value", (sn) => {
+          console.log(sn);
+          console.log(sn.val());
+        });
+    },
+    async readOnce() {
+      const sn = await this.$firebase
+        .database()
+        .ref()
+        .child("abcd")
+        .once("value");
+      console.log(sn.val());
     },
   },
 };
