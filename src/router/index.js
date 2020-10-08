@@ -31,6 +31,30 @@ const routes = [
     component: () =>
       import('../views/storage'),
   },
+  {
+    path: '/editor',
+    name: 'editor',
+    component: () =>
+      import('../views/editor'),
+  },
+  {
+    path: '/:collection/:document',
+    name: 'collection-document',
+    component: () =>
+      import('../components/renderer'),
+  },
+  {
+    path: '/:collection/:document/:action',
+    name: 'collection-document-action',
+    component: () =>
+      import('../components/renderer'),
+  },
+  {
+    path: '*',
+    name: 'error',
+    component: () =>
+      import('../views/error'),
+  },
 ];
 
 const router = new VueRouter({
