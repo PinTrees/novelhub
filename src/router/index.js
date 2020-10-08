@@ -19,6 +19,18 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
+  {
+    path: '/board',
+    name: 'board',
+    component: () =>
+      import('../views/board/'),
+  },
+  {
+    path: '/storage',
+    name: 'storage',
+    component: () =>
+      import('../views/storage'),
+  },
 ];
 
 const router = new VueRouter({

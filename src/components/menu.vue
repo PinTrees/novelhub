@@ -41,6 +41,9 @@
                 >
                   <v-icon>mdi-chevron-double-down</v-icon>
                 </v-btn>
+                <v-btn icon @click="removeItem(items, i)">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
               </span>
             </v-list-item-title>
           </v-list-item-content>
@@ -71,6 +74,9 @@
                   v-if="j < item.subItems.length - 1"
                 >
                   <v-icon>mdi-chevron-double-down</v-icon>
+                </v-btn>
+                <v-btn icon @click="removeItem(items, j)">
+                  <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </span>
             </v-list-item-title>
@@ -210,6 +216,7 @@ export default {
     openDialogSubItem(index, subIndex) {
       this.selectedItemIndex = index;
       this.selectedSubItemIndex = subIndex;
+      this.dialogSubItem = true;
       if (index < 0) {
         this.formSubItem.title = "";
         this.formSubItem.to = "";
@@ -217,7 +224,6 @@ export default {
         this.formSubItem.title = this.items[index].subItems[subIndex].title;
         this.formSubItem.to = this.items[index].subItems[subIndex].to;
       }
-      this.dialogSubItem = true;
     },
     saveSubItem() {
       if (this.selectedSubItemIndex < 0) {
@@ -229,8 +235,12 @@ export default {
           to: this.formSubItem.to,
         });
       } else {
-        this.items[this.selectedItemIndex].icon = this.formItem.icon;
-        this.items[this.selectedItemIndex].title = this.formItem.title;
+        this.items[this.selectedItemIndex].subItems[
+          this.selectedSubItemIndex
+        ].title = this.formSubItem.title;
+        this.items[this.selectedItemIndex].subItems[
+          this.selectedSubItemIndex
+        ].to = this.formSubItem.to;
       }
       this.save();
     },
@@ -250,6 +260,10 @@ export default {
     moveItem(items, i, arrow) {
       const item = items.splice(i, 1)[0];
       items.splice(i + arrow, 0, item);
+      this.save();
+    },
+    removeItem(items, i) {
+      items.splice(i, 1);
       this.save();
     },
   },

@@ -4,6 +4,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <site-title :title="site.title"></site-title>
       <v-spacer />
+      <site-sign></site-sign>
     </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer" width="400">
@@ -22,9 +23,10 @@
 import SiteTitle from "@/components/title.vue";
 import TFooter from "@/components/footer.vue";
 import SiteMenu from "@/components/menu.vue";
+import SiteSign from "@/components/sign.vue";
 
 export default {
-  components: { SiteTitle, TFooter, SiteMenu },
+  components: { SiteTitle, TFooter, SiteMenu, SiteSign },
   name: "App",
   data() {
     return {
